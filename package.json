@@ -1,0 +1,22 @@
+{
+  "name": "bit-node",
+  "version": "1.0.0",
+  "description": "bit_node.js",
+  "main": "test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SSoohyun/BIT_NODE.JS.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SSoohyun/BIT_NODE.JS/issues"
+  },
+  "homepage": "https://github.com/SSoohyun/BIT_NODE.JS#readme",
+  "dependencies": {
+    "nconf": "^0.11.3"
+  }
+}
