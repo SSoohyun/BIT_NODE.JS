@@ -31,13 +31,4 @@ server.on('request', function(req, res) { // 클라이언트가 요청(req: 요�
     res.write("</body>");
     res.write("</html>");
     res.end();
-
-    // 파일 읽어 응답하기
-    var filename = 'choonsik.jpg';
-    var fs = require('fs');
-    fs.readFile(filename, function(err, data) {
-        res.writeHead(200, {"Content-Type":'image/jpg'});
-        res.write(data);
-        res.end();
-    });
 });

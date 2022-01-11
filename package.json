@@ -17,6 +17,10 @@
   },
   "homepage": "https://github.com/SSoohyun/BIT_NODE.JS#readme",
   "dependencies": {
-    "nconf": "^0.11.3"
+    "cookie-parser": "^1.4.6",
+    "express": "^4.17.2",
+    "express-session": "^1.17.2",
+    "nconf": "^0.11.3",
+    "serve-static": "^1.14.2"
   }
 }
