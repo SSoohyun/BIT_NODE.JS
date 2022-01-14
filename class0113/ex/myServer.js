@@ -3,11 +3,14 @@ let express = require('express'), http = require('http'), path = require('path')
 let bodyParser = require('body-parser'), static = require('serve-static');
 let mongoose = require('mongoose');
 
+// member
+let member = require('./member');
+// let listMember = require('./member').listMember;
+// let addMember = require('./member').addMember;
+// let authMember = require('./member').authMember;
+
 // Session 미들웨어 불러오기
 let expressSession = require('express-session');
-
-//
-let member = require('./member');
 
 // 익스프레스 객체 생성
 let app = express();
@@ -82,7 +85,7 @@ let router = express.Router();
 
 // 회원가입
 router.route('/process/addMember').post(function(req, res) {
-    console.log('/process/addMember 호출됨');
+    console.log('/process/addMember 호출');
 
     // 요청 파라미터 확인
     let userId = req.body.userId || req.query.userId;
@@ -93,7 +96,10 @@ router.route('/process/addMember').post(function(req, res) {
 
     // 데이터베이스 객체가 초기화된 경우, addMember 함수 호출
     if(database) {
-        member.addMember(database, userId, userPwd, userName, age, function(err, result) {
+        // MemberModel 인스턴스 생성해서 addMember의 인자로 보냄
+        let user = new MemberModel({"userId":userId, "userPwd":userPwd, "userName":userName, "age":age});
+
+        member.addMember(database, user, userId, userPwd, userName, age, function(err, result) {
             if(err) {
                 throw err;
             }
@@ -118,7 +124,7 @@ router.route('/process/addMember').post(function(req, res) {
 
 // 로그인 라우팅 함수 - 로그인 후 세션 저장함
 router.route('/process/login').post(function(req, res) {
-    console.log('/process/login 호출됨');
+    console.log('/process/login 호출');
     
     // 요청 파라미터 확인
     let userId = req.body.userId || req.query.userId;
@@ -127,7 +133,7 @@ router.route('/process/login').post(function(req, res) {
 
     // 데이터베이스 객체가 초기화된 경우, authMember 함수 호출하여 사용자 인증
     if(database) {
-        member.authMember(database, userId, userPwd, function(err, docs) {
+        member.authMember(database, MemberModel, userId, userPwd, function(err, docs) {
             if(err) {
                 throw err;
             }
@@ -152,20 +158,53 @@ router.route('/process/login').post(function(req, res) {
 
 // 회원 리스트 조회
 router.route('/process/listMember').post(function(req, res) {
-    console.log('/process/listMember 호출됨');
+    console.log('/process/listMember 호출');
     
     // 요청 파라미터는 없음
 
     // 데이터베이스 객체가 초기화된 경우, authMember 함수 호출하여 사용자 인증
     if(database) {
-        member.listMember(MemberModel);
+        // 1. 모든 사용자 검색
+        member.listMember(database, MemberModel, function(err, results) {
+            if(err) {
+                console.error('사용자 리스트 조회 중 오류 발생 : ' + err.stack);
+                res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+                res.write('<h2>사용자 리스트 조회 중 오류 발생</h2>');
+                res.write('<p>' + err.stack + '</p>');
+                res.end();
+            }
+
+            if(results.length > 0) { // 결과 객체가 있으면 리스트 전송
+                console.dir(results);
+                res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+                res.write('<h2>사용자 리스트</h2>');
+                res.write('<div><ul>');
+                for(let i = 0; i < results.length; i++) {
+                    let curUserId = results[i]._doc.userId;
+                    let curUserPwd = results[i]._doc.userPwd;
+                    let curUserName = results[i]._doc.userName;
+                    let curAge = results[i]._doc.age;
+                    let curRegDate = results[i]._doc.regDate;
+                    let curUpdateDate = results[i]._doc.updateDate;
+                    res.write('<li>#' + i + ' : ' 
+                    + '<br>아이디=' + curUserId + ' / ' + '비밀번호=' + curUserPwd + ' / '
+                    + '<br>이름=' + curUserName + ' / ' + '나이=' + curAge + ' / '
+                    + '<br>가입일=' + curRegDate + ' / ' + '수정일=' + curUpdateDate + '<hr></li>');
+                }
+                res.write('</ul></div>');
+                res.end();
+            } else { // 결과 객체가 없으면 실패 응답 전송
+                res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+                res.write('<h2>조회에 실패했습니다.</h2>');
+                res.end();
+            }
+        });
     } else {
         res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
         res.write('<h2>데이터베이스 연결 실패</h2>');
         res.end();
     }
 });
-
 
 app.use('/', router); // 라우터 객체를 app 객체에 등록
 

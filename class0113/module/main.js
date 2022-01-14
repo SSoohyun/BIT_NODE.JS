@@ -14,10 +14,10 @@ function showMember1() {
 console.log('사용자 정보: %s', showMember1());
 
 // member2
-function showMember2() {
-    return member2.getMember().userName + ', ' + member1.group.userName;
-}
-console.log('사용자 정보: %s', showMember2());
+// function showMember2() {
+//     return member2.getMember().userName + ', ' + member1.group.userName;
+// }
+// console.log('사용자 정보: %s', showMember2());
 
 // member3
 function showMember3() {
