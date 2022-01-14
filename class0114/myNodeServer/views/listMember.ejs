@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>사용자 리스트</h2>
+    <div>
+        <ul>
+            <% for(let i = 0; i < results.length; i++) {
+                let curUserId = results[i]._doc.userId
+                let curUserName = results[i]._doc.userName %>
+                <li>#<%=i%> - 
+                아이디: <%=curUserId%>, 이름: <%=curUserName%></li>
+            <% } %>
+        </ul>
+    </div>
+    <br><br><a href='/public/listMember.html'>다시 요청하기</a>
+</body>
+</html>
